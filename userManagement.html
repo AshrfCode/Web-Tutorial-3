@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-8 text-gray-800 font-sans">
+
+    <div class="max-w-5xl mx-auto">
+        
+        <div class="bg-white rounded-t-lg shadow-sm p-6 border-b border-gray-200 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-700">
+                Welcome, <span id="welcomeName" class="text-blue-600">User</span>!
+            </h1>
+            <button id="logoutBtn" class="bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-md font-medium transition-colors">
+                Logout
+            </button>
+        </div>
+
+        <div class="bg-white rounded-b-lg shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wider border-b border-gray-200">
+                            <th class="py-4 px-6 font-semibold">User Name</th>
+                            <th class="py-4 px-6 font-semibold">Email</th>
+                            <th class="py-4 px-6 font-semibold">Date of Birth</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody" class="divide-y divide-gray-100 text-gray-600 text-sm">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Handle Welcome Message
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const welcomeNameElement = document.getElementById('welcomeName');
+
+            if (!currentUser) {
+                // If there's no user logged in, you might want to redirect them
+                alert('No user is currently logged in. Redirecting to login...');
+                window.location.href = 'login.html'; 
+            } else {
+                welcomeNameElement.textContent = currentUser.username;
+            }
+
+            // 2. Handle Users Table
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const tableBody = document.getElementById('userTableBody');
+
+            if (users.length === 0) {
+                // Show a friendly message if the database is empty
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="py-8 text-center text-gray-400 italic">
+                            No users found in the system.
+                        </td>
+                    </tr>
+                `;
+            } else {
+                // Generate rows for each user
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.className = "hover:bg-blue-50 transition-colors duration-150";
+                    
+                    row.innerHTML = `
+                        <td class="py-4 px-6 font-medium text-gray-900">${user.username}</td>
+                        <td class="py-4 px-6">${user.email}</td>
+                        <td class="py-4 px-6">${user.dob}</td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+            }
+
+            // 3. Handle Logout
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            });
+        });
+    </script>
+
+</body>
+</html>
